@@ -37,6 +37,15 @@ public class CommonGameEvents {
                     Utils.strikeLightningAt(level, Utils.getRelevantBlockPos(player));
                 }
             }
+
+            if (Config.Rainy.enable) {
+                if (level.getGameTime() % Config.Rainy.damageInterval == 0
+                        && level.isRaining() && level.getBiome(blockPos).value().warmEnoughToRain(blockPos)
+                        && level.canSeeSky(Utils.getRelevantBlockPos(player)))
+                {
+                    player.hurt(new DamageSource(registryAccess.holderOrThrow(DamageTypes.DRAGON_BREATH)), (float) Config.Rainy.damage);
+                }
+            }
         }
 
     }

@@ -25,6 +25,10 @@ public class Config {
 
     private static final ModConfigSpec.BooleanValue SNOWY_ENABLE;
 
+    private static final ModConfigSpec.BooleanValue RAINY_ENABLE;
+    private static final ModConfigSpec.DoubleValue RAINY_DAMAGE;
+    private static final ModConfigSpec.IntValue RAINY_DAMAGE_INTERVAL;
+
     static final ModConfigSpec SPEC;
 
     static {
@@ -72,6 +76,20 @@ public class Config {
 
         BUILDER.pop();
 
+        BUILDER.push("rainy");
+
+        RAINY_ENABLE = BUILDER.comment("Enable deadly weather for rainfall")
+                .translation(TL_KEY + "rainy.enable")
+                .define("enable", true);
+        RAINY_DAMAGE = BUILDER.comment("Damage dealt when exposed to rain")
+                .translation(TL_KEY + "rainy.damage")
+                .defineInRange("damage", 1, 0, Double.MAX_VALUE);
+        RAINY_DAMAGE_INTERVAL = BUILDER.comment("Time in ticks between rain damage")
+                .translation(TL_KEY + "rainy.damage_interval")
+                .defineInRange("damageInterval", 20, 1, Integer.MAX_VALUE);
+
+        BUILDER.pop();
+
         SPEC = BUILDER.build();
     }
 
@@ -95,6 +113,12 @@ public class Config {
         public static boolean enable;
     }
 
+    public static class Rainy {
+        public static boolean enable;
+        public static double damage;
+        public static int damageInterval;
+    }
+
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         Sunny.enable = SUNNY_ENABLE.get();
@@ -108,5 +132,9 @@ public class Config {
         Thunder.PlayerSeeking.interval = THUNDER_PLAYER_SEEKING_INTERVAL.get();
 
         Snowy.enable = SNOWY_ENABLE.get();
+
+        Rainy.enable = RAINY_ENABLE.get();
+        Rainy.damage = RAINY_DAMAGE.get();
+        Rainy.damageInterval = RAINY_DAMAGE_INTERVAL.get();
     }
 }
