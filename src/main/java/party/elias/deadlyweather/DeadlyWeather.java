@@ -5,6 +5,9 @@ import net.minecraft.client.particle.WaterDropParticle;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -31,6 +34,9 @@ public class DeadlyWeather {
 
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> ACID_RAIN_PARTICLE = PARTICLE_TYPES.register("acid_rain", () ->
             new SimpleParticleType(false));
+
+
+    public static final ResourceKey<DamageType> ACID_DAMAGE_KEY = ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, "acid"));
 
     public DeadlyWeather(IEventBus modEventBus, ModContainer modContainer) {
 

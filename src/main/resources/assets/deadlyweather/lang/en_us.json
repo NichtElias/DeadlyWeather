@@ -1,4 +1,6 @@
 {
+  "death.attack.acid": "%s was dissolved by acid rain.",
+
   "deadlyweather.configuration.sunny": "Sunny",
   "deadlyweather.configuration.sunny.enable": "Enable",
   "deadlyweather.configuration.sunny.damage": "Damage",

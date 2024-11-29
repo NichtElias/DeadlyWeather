@@ -43,7 +43,7 @@ public class CommonGameEvents {
                         && level.isRaining() && level.getBiome(blockPos).value().warmEnoughToRain(blockPos)
                         && level.canSeeSky(Utils.getRelevantBlockPos(player)))
                 {
-                    player.hurt(new DamageSource(registryAccess.holderOrThrow(DamageTypes.DRAGON_BREATH)), (float) Config.Rainy.damage);
+                    player.hurt(new DamageSource(registryAccess.holderOrThrow(DeadlyWeather.ACID_DAMAGE_KEY)), (float) Config.Rainy.damage);
                 }
             }
         }
