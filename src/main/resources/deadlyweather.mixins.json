@@ -5,6 +5,8 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "deadlyweather.refmap.json",
   "mixins": [
+    "LivingEntityMixin",
+    "ServerLevelMixin"
   ],
   "client": [
   ],
