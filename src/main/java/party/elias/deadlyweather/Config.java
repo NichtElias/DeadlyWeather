@@ -55,7 +55,7 @@ public class Config {
                 .translation(TL_KEY + "thunder.chance")
                 .defineInRange("chance", 2000, 1, Integer.MAX_VALUE);
 
-        BUILDER.push("playerSeeking");
+        BUILDER.translation(TL_KEY + "thunder.player_seeking").push("playerSeeking");
 
         THUNDER_PLAYER_SEEKING_ENABLE = BUILDER.comment("Enable spawning extra lightning aimed at players")
                 .translation(TL_KEY + "thunder.player_seeking.enable")

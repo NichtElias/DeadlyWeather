@@ -1,5 +1,18 @@
 {
-  "itemGroup.deadlyweather": "Example Mod Tab",
-  "block.deadlyweather.example_block": "Example Block",
-  "item.deadlyweather.example_item": "Example Item"
+  "deadlyweather.configuration.sunny": "Sunny",
+  "deadlyweather.configuration.sunny.enable": "Enable",
+  "deadlyweather.configuration.sunny.damage": "Damage",
+  "deadlyweather.configuration.sunny.damage_interval": "Damage Interval",
+  "deadlyweather.configuration.thunder": "Thunder",
+  "deadlyweather.configuration.thunder.enable": "Enable",
+  "deadlyweather.configuration.thunder.chance": "Chance",
+  "deadlyweather.configuration.thunder.player_seeking": "Player Seeking",
+  "deadlyweather.configuration.thunder.player_seeking.enable": "Enable",
+  "deadlyweather.configuration.thunder.player_seeking.interval": "Interval",
+  "deadlyweather.configuration.snowy": "Snowy",
+  "deadlyweather.configuration.snowy.enable": "Enable",
+  "deadlyweather.configuration.rainy": "Rainy",
+  "deadlyweather.configuration.rainy.enable": "Enable",
+  "deadlyweather.configuration.rainy.damage": "Damage",
+  "deadlyweather.configuration.rainy.damage_interval": "Damage Interval"
 }
