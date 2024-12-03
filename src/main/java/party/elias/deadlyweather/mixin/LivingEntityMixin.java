@@ -25,8 +25,7 @@ public class LivingEntityMixin {
     @WrapOperation(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;canFreeze()Z"))
     private boolean wrapCanFreeze(LivingEntity instance, Operation<Boolean> original) {
         if (Config.Snowy.enable && instance instanceof Player) {
-            return Utils.shouldFreeze(instance)
-                    && !Utils.isVeryFrostResistant(instance);
+            return original.call(instance) || (Utils.shouldFreeze(instance) && !Utils.isVeryFrostResistant(instance));
         }
         return original.call(instance);
     }
