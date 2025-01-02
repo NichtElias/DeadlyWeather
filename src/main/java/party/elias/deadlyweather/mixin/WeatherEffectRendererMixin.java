@@ -18,7 +18,7 @@ public class WeatherEffectRendererMixin {
     private static final ResourceLocation RAIN_LOCATION = ResourceLocation.withDefaultNamespace("textures/environment/rain.png");
     private static final ResourceLocation ACID_RAIN_LOCATION = ResourceLocation.fromNamespaceAndPath(DeadlyWeather.MODID, "textures/environment/acid_rain.png");
 
-    @ModifyArg(method = "render(Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/world/phys/Vec3;IFLjava/util/List;Ljava/util/List;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(ILnet/minecraft/resources/ResourceLocation;)V"), index = 1)
+    @ModifyArg(method = "render(Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/phys/Vec3;IFLjava/util/List;Ljava/util/List;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderType;weather(Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/renderer/RenderType;"), index = 0)
     private ResourceLocation modifyShaderTexture(ResourceLocation resourceLocation) {
         if (Config.Rainy.enable && resourceLocation.equals(RAIN_LOCATION)) {
             return ACID_RAIN_LOCATION;
