@@ -26,7 +26,7 @@ public class CommonGameEvents {
                 if (level.getGameTime() % Config.Sunny.damageInterval == 0
                         && !level.isRaining() && level.isDay() && level.canSeeSky(Utils.getRelevantBlockPos(player)))
                 {
-                    player.hurt(new DamageSource(registryAccess.holderOrThrow(DamageTypes.IN_FIRE)), (float) Config.Sunny.damage);
+                    player.hurtServer(level, new DamageSource(registryAccess.holderOrThrow(DamageTypes.IN_FIRE)), (float) Config.Sunny.damage);
                 }
             }
 
@@ -40,10 +40,10 @@ public class CommonGameEvents {
 
             if (Config.Rainy.enable) {
                 if (level.getGameTime() % Config.Rainy.damageInterval == 0
-                        && level.isRaining() && level.getBiome(blockPos).value().warmEnoughToRain(blockPos)
+                        && level.isRaining() && level.getBiome(blockPos).value().warmEnoughToRain(blockPos, level.getSeaLevel())
                         && level.canSeeSky(Utils.getRelevantBlockPos(player)))
                 {
-                    player.hurt(new DamageSource(registryAccess.holderOrThrow(DeadlyWeather.ACID_DAMAGE_KEY)), (float) Config.Rainy.damage);
+                    player.hurtServer(level, new DamageSource(registryAccess.holderOrThrow(DeadlyWeather.ACID_DAMAGE_KEY)), (float) Config.Rainy.damage);
                 }
             }
         }

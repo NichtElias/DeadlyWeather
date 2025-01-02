@@ -9,7 +9,7 @@
     "ServerLevelMixin"
   ],
   "client": [
-    "LevelRendererMixin"
+    "WeatherEffectRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

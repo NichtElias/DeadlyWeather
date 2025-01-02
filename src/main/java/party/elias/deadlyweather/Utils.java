@@ -4,18 +4,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 public class Utils {
     public static LightningBolt strikeLightningAt(ServerLevel level, BlockPos blockPos) {
-        LightningBolt lightningBolt = EntityType.LIGHTNING_BOLT.create(level);
+        LightningBolt lightningBolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.NATURAL);
         if (lightningBolt != null) {
             lightningBolt.moveTo(Vec3.atBottomCenterOf(blockPos));
             level.addFreshEntity(lightningBolt);
@@ -30,7 +26,7 @@ public class Utils {
     public static boolean shouldFreeze(LivingEntity entity) {
         Level level = entity.level();
         BlockPos blockPos = getRelevantBlockPos(entity);
-        return level.isRaining() && !level.getBiome(blockPos).value().warmEnoughToRain(blockPos)
+        return level.isRaining() && !level.getBiome(blockPos).value().warmEnoughToRain(blockPos, level.getSeaLevel())
                 && level.canSeeSky(blockPos) && level.getBrightness(LightLayer.BLOCK, blockPos) < 12;
     }
 
