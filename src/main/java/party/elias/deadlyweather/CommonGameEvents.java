@@ -9,6 +9,7 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 @EventBusSubscriber(modid = DeadlyWeather.MODID, bus = EventBusSubscriber.Bus.GAME)
@@ -22,31 +23,41 @@ public class CommonGameEvents {
         RegistryAccess registryAccess = entity.registryAccess();
 
         if (entity.level() instanceof ServerLevel level && entity instanceof ServerPlayer player) {
-            if (Config.Sunny.enable) {
-                if (level.getGameTime() % Config.Sunny.damageInterval == 0
+            WeatherSettingsSD settings = WeatherSettingsSD.from(level);
+
+            if (settings.getBool(WeatherSettingsSD.BoolSettings.SUNNY_ENABLE)) {
+                if (level.getGameTime() % settings.getInt(WeatherSettingsSD.IntSettings.SUNNY_DAMAGE_INTERVAL) == 0
                         && !level.isRaining() && level.isDay() && level.canSeeSky(Utils.getRelevantBlockPos(player)))
                 {
-                    player.hurt(new DamageSource(registryAccess.holderOrThrow(DamageTypes.IN_FIRE)), (float) Config.Sunny.damage);
+                    player.hurt(new DamageSource(registryAccess.holderOrThrow(DamageTypes.IN_FIRE)), (float) settings.getDouble(WeatherSettingsSD.DoubleSettings.SUNNY_DAMAGE));
                 }
             }
 
-            if (Config.Thunder.enable && Config.Thunder.PlayerSeeking.enable) {
-                if (level.getGameTime() % Config.Thunder.PlayerSeeking.interval == 0
+            if (settings.getBool(WeatherSettingsSD.BoolSettings.THUNDER_ENABLE)
+                    && settings.getBool(WeatherSettingsSD.BoolSettings.THUNDER_PLAYER_SEEKING_ENABLE)) {
+                if (level.getGameTime() % settings.getInt(WeatherSettingsSD.IntSettings.THUNDER_PLAYER_SEEKING_INTERVAL) == 0
                         && level.isThundering() && level.canSeeSky(Utils.getRelevantBlockPos(player)))
                 {
                     Utils.strikeLightningAt(level, Utils.getRelevantBlockPos(player));
                 }
             }
 
-            if (Config.Rainy.enable) {
-                if (level.getGameTime() % Config.Rainy.damageInterval == 0
+            if (settings.getBool(WeatherSettingsSD.BoolSettings.RAINY_ENABLE)) {
+                if (level.getGameTime() % settings.getInt(WeatherSettingsSD.IntSettings.RAINY_DAMAGE_INTERVAL) == 0
                         && level.isRaining() && level.getBiome(blockPos).value().warmEnoughToRain(blockPos)
                         && level.canSeeSky(Utils.getRelevantBlockPos(player)))
                 {
-                    player.hurt(new DamageSource(registryAccess.holderOrThrow(DeadlyWeather.ACID_DAMAGE_KEY)), (float) Config.Rainy.damage);
+                    player.hurt(new DamageSource(registryAccess.holderOrThrow(DeadlyWeather.ACID_DAMAGE_KEY)), (float) settings.getDouble(WeatherSettingsSD.DoubleSettings.RAINY_DAMAGE));
                 }
             }
         }
 
     }
+
+
+    @SubscribeEvent
+    public static void onRegisterCommandsEvent(RegisterCommandsEvent event) {
+        DeadlyWeatherCommand.register(event.getDispatcher());
+    }
+
 }
