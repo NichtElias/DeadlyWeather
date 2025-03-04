@@ -9,8 +9,10 @@ import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import party.elias.deadlyweather.ClientWeatherSettings;
 import party.elias.deadlyweather.Config;
 import party.elias.deadlyweather.DeadlyWeather;
+import party.elias.deadlyweather.WeatherSettings;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
@@ -20,7 +22,7 @@ public class LevelRendererMixin {
 
     @ModifyArg(method = "renderSnowAndRain", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;setShaderTexture(ILnet/minecraft/resources/ResourceLocation;)V"), index = 1)
     private ResourceLocation modifyShaderTexture(ResourceLocation resourceLocation) {
-        if (Config.Rainy.enable && resourceLocation.equals(RAIN_LOCATION)) {
+        if (ClientWeatherSettings.get(WeatherSettings.BoolSettings.RAINY_ENABLE) && resourceLocation.equals(RAIN_LOCATION)) {
             return ACID_RAIN_LOCATION;
         }
         return resourceLocation;
@@ -28,7 +30,7 @@ public class LevelRendererMixin {
 
     @WrapOperation(method = "tickRain", at = @At(value = "FIELD", target = "Lnet/minecraft/core/particles/ParticleTypes;RAIN:Lnet/minecraft/core/particles/SimpleParticleType;"))
     private SimpleParticleType wrapParticleTypesRain(Operation<SimpleParticleType> original) {
-        if (Config.Rainy.enable) {
+        if (ClientWeatherSettings.get(WeatherSettings.BoolSettings.RAINY_ENABLE)) {
             return DeadlyWeather.ACID_RAIN_PARTICLE.get();
         }
         return ParticleTypes.RAIN;
