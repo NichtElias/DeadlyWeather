@@ -26,7 +26,7 @@ public class DeadlyWeatherCommand {
                                         .then(
                                                 Commands.literal("bool")
                                                         .then(
-                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettingsSD.BoolSettings.class))
+                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettings.BoolSettings.class))
                                                                         .then(
                                                                                 Commands.argument("value", BoolArgumentType.bool())
                                                                                         .executes(context -> set(context, SettingType.BOOL))
@@ -36,7 +36,7 @@ public class DeadlyWeatherCommand {
                                         .then(
                                                 Commands.literal("int")
                                                         .then(
-                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettingsSD.IntSettings.class))
+                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettings.IntSettings.class))
                                                                         .then(
                                                                                 Commands.argument("value", IntegerArgumentType.integer())
                                                                                         .executes(context -> set(context, SettingType.INT))
@@ -46,7 +46,7 @@ public class DeadlyWeatherCommand {
                                         .then(
                                                 Commands.literal("double")
                                                         .then(
-                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettingsSD.DoubleSettings.class))
+                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettings.DoubleSettings.class))
                                                                         .then(
                                                                                 Commands.argument("value", DoubleArgumentType.doubleArg())
                                                                                         .executes(context -> set(context, SettingType.DOUBLE))
@@ -59,21 +59,21 @@ public class DeadlyWeatherCommand {
                                         .then(
                                                 Commands.literal("bool")
                                                         .then(
-                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettingsSD.BoolSettings.class))
+                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettings.BoolSettings.class))
                                                                         .executes(context -> get(context, SettingType.BOOL))
                                                         )
                                         )
                                         .then(
                                                 Commands.literal("int")
                                                         .then(
-                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettingsSD.IntSettings.class))
+                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettings.IntSettings.class))
                                                                         .executes(context -> get(context, SettingType.INT))
                                                         )
                                         )
                                         .then(
                                                 Commands.literal("double")
                                                         .then(
-                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettingsSD.DoubleSettings.class))
+                                                                Commands.argument("key", EnumArgument.enumArgument(WeatherSettings.DoubleSettings.class))
                                                                         .executes(context -> get(context, SettingType.DOUBLE))
                                                         )
                                         )
@@ -87,16 +87,16 @@ public class DeadlyWeatherCommand {
         WeatherSettingsSD settings = WeatherSettingsSD.from(context.getSource().getLevel());
 
         if (type == SettingType.BOOL) {
-            WeatherSettingsSD.BoolSettings key = context.getArgument("key", WeatherSettingsSD.BoolSettings.class);
-            settings.setBool(key, context.getArgument("value", Boolean.class));
+            WeatherSettings.BoolSettings key = context.getArgument("key", WeatherSettings.BoolSettings.class);
+            settings.set(key, context.getArgument("value", Boolean.class));
 
         } else if (type == SettingType.INT) {
-            WeatherSettingsSD.IntSettings key = context.getArgument("key", WeatherSettingsSD.IntSettings.class);
-            settings.setInt(key, context.getArgument("value", Integer.class));
+            WeatherSettings.IntSettings key = context.getArgument("key", WeatherSettings.IntSettings.class);
+            settings.set(key, context.getArgument("value", Integer.class));
 
         } else if (type == SettingType.DOUBLE) {
-            WeatherSettingsSD.DoubleSettings key = context.getArgument("key", WeatherSettingsSD.DoubleSettings.class);
-            settings.setDouble(key, context.getArgument("value", Double.class));
+            WeatherSettings.DoubleSettings key = context.getArgument("key", WeatherSettings.DoubleSettings.class);
+            settings.set(key, context.getArgument("value", Double.class));
 
         }
 
@@ -110,16 +110,16 @@ public class DeadlyWeatherCommand {
         WeatherSettingsSD settings = WeatherSettingsSD.from(context.getSource().getLevel());
 
         if (type == SettingType.BOOL) {
-            WeatherSettingsSD.BoolSettings key = context.getArgument("key", WeatherSettingsSD.BoolSettings.class);
-            context.getSource().sendSystemMessage(Component.literal(String.valueOf(settings.getBool(key))));
+            WeatherSettings.BoolSettings key = context.getArgument("key", WeatherSettings.BoolSettings.class);
+            context.getSource().sendSystemMessage(Component.literal(String.valueOf(settings.get(key))));
 
         } else if (type == SettingType.INT) {
-            WeatherSettingsSD.IntSettings key = context.getArgument("key", WeatherSettingsSD.IntSettings.class);
-            context.getSource().sendSystemMessage(Component.literal(String.valueOf(settings.getInt(key))));
+            WeatherSettings.IntSettings key = context.getArgument("key", WeatherSettings.IntSettings.class);
+            context.getSource().sendSystemMessage(Component.literal(String.valueOf(settings.get(key))));
 
         } else if (type == SettingType.DOUBLE) {
-            WeatherSettingsSD.DoubleSettings key = context.getArgument("key", WeatherSettingsSD.DoubleSettings.class);
-            context.getSource().sendSystemMessage(Component.literal(String.valueOf(settings.getDouble(key))));
+            WeatherSettings.DoubleSettings key = context.getArgument("key", WeatherSettings.DoubleSettings.class);
+            context.getSource().sendSystemMessage(Component.literal(String.valueOf(settings.get(key))));
         }
 
         return 1;

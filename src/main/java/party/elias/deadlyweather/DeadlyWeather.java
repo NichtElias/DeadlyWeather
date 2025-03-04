@@ -19,6 +19,9 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handlers.ClientPayloadHandler;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.slf4j.Logger;
@@ -54,6 +57,16 @@ public class DeadlyWeather {
         @SubscribeEvent
         public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {
             event.registerSpriteSet(ACID_RAIN_PARTICLE.get(), WaterDropParticle.Provider::new);
+        }
+
+        @SubscribeEvent
+        public static void onRegisterPayloadHandlers(RegisterPayloadHandlersEvent event) {
+            PayloadRegistrar registrar = event.registrar("1");
+            registrar.playToClient(
+                    WeatherSettings.TYPE,
+                    WeatherSettings.STREAM_CODEC,
+                    ClientWeatherSettings::handleWeatherSettingsPayload
+            );
         }
     }
 }

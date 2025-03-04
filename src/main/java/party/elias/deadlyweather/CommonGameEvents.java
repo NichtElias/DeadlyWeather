@@ -10,7 +10,10 @@ import net.minecraft.world.entity.Entity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
 @EventBusSubscriber(modid = DeadlyWeather.MODID, bus = EventBusSubscriber.Bus.GAME)
 public class CommonGameEvents {
@@ -25,29 +28,29 @@ public class CommonGameEvents {
         if (entity.level() instanceof ServerLevel level && entity instanceof ServerPlayer player) {
             WeatherSettingsSD settings = WeatherSettingsSD.from(level);
 
-            if (settings.getBool(WeatherSettingsSD.BoolSettings.SUNNY_ENABLE)) {
-                if (level.getGameTime() % settings.getInt(WeatherSettingsSD.IntSettings.SUNNY_DAMAGE_INTERVAL) == 0
+            if (settings.get(WeatherSettings.BoolSettings.SUNNY_ENABLE)) {
+                if (level.getGameTime() % settings.get(WeatherSettings.IntSettings.SUNNY_DAMAGE_INTERVAL) == 0
                         && !level.isRaining() && level.isDay() && level.canSeeSky(Utils.getRelevantBlockPos(player)))
                 {
-                    player.hurtServer(level, new DamageSource(registryAccess.holderOrThrow(DamageTypes.IN_FIRE)), (float) settings.getDouble(WeatherSettingsSD.DoubleSettings.SUNNY_DAMAGE));
+                    player.hurtServer(level, new DamageSource(registryAccess.holderOrThrow(DamageTypes.IN_FIRE)), (float) settings.get(WeatherSettings.DoubleSettings.SUNNY_DAMAGE));
                 }
             }
 
-            if (settings.getBool(WeatherSettingsSD.BoolSettings.THUNDER_ENABLE)
-                    && settings.getBool(WeatherSettingsSD.BoolSettings.THUNDER_PLAYER_SEEKING_ENABLE)) {
-                if (level.getGameTime() % settings.getInt(WeatherSettingsSD.IntSettings.THUNDER_PLAYER_SEEKING_INTERVAL) == 0
+            if (settings.get(WeatherSettings.BoolSettings.THUNDER_ENABLE)
+                    && settings.get(WeatherSettings.BoolSettings.THUNDER_PLAYER_SEEKING_ENABLE)) {
+                if (level.getGameTime() % settings.get(WeatherSettings.IntSettings.THUNDER_PLAYER_SEEKING_INTERVAL) == 0
                         && level.isThundering() && level.canSeeSky(Utils.getRelevantBlockPos(player)))
                 {
                     Utils.strikeLightningAt(level, Utils.getRelevantBlockPos(player));
                 }
             }
 
-            if (settings.getBool(WeatherSettingsSD.BoolSettings.RAINY_ENABLE)) {
-                if (level.getGameTime() % settings.getInt(WeatherSettingsSD.IntSettings.RAINY_DAMAGE_INTERVAL) == 0
+            if (settings.get(WeatherSettings.BoolSettings.RAINY_ENABLE)) {
+                if (level.getGameTime() % settings.get(WeatherSettings.IntSettings.RAINY_DAMAGE_INTERVAL) == 0
                         && level.isRaining() && level.getBiome(blockPos).value().warmEnoughToRain(blockPos, level.getSeaLevel())
                         && level.canSeeSky(Utils.getRelevantBlockPos(player)))
                 {
-                    player.hurtServer(level, new DamageSource(registryAccess.holderOrThrow(DeadlyWeather.ACID_DAMAGE_KEY)), (float) settings.getDouble(WeatherSettingsSD.DoubleSettings.RAINY_DAMAGE));
+                    player.hurtServer(level, new DamageSource(registryAccess.holderOrThrow(DeadlyWeather.ACID_DAMAGE_KEY)), (float) settings.get(WeatherSettings.DoubleSettings.RAINY_DAMAGE));
                 }
             }
         }
@@ -58,6 +61,13 @@ public class CommonGameEvents {
     @SubscribeEvent
     public static void onRegisterCommandsEvent(RegisterCommandsEvent event) {
         DeadlyWeatherCommand.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            PacketDistributor.sendToPlayer(player, WeatherSettingsSD.from((ServerLevel) player.level()).getSettings());
+        }
     }
 
 }
