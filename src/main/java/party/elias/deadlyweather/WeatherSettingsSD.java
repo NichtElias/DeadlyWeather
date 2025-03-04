@@ -7,82 +7,39 @@ import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
-
-import java.util.HashMap;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class WeatherSettingsSD extends SavedData {
 
     private static final Factory<WeatherSettingsSD> FACTORY = new Factory<>(WeatherSettingsSD::new, WeatherSettingsSD::load);
     private static final String FILENAME = "deadlyweather_settings";
 
-    private final HashMap<BoolSettings, Boolean> boolSettings;
-    private final HashMap<IntSettings, Integer> intSettings;
-    private final HashMap<DoubleSettings, Double> doubleSettings;
+    private final WeatherSettings settings;
 
     public WeatherSettingsSD() {
-        this.boolSettings = new HashMap<>();
-        this.intSettings = new HashMap<>();
-        this.doubleSettings = new HashMap<>();
-
-        initFromConfig();
-    }
-
-    public enum BoolSettings {
-        SUNNY_ENABLE,
-        THUNDER_ENABLE,
-        THUNDER_PLAYER_SEEKING_ENABLE,
-        SNOWY_ENABLE,
-        RAINY_ENABLE
-    }
-
-    public enum IntSettings {
-        SUNNY_DAMAGE_INTERVAL,
-        THUNDER_CHANCE,
-        THUNDER_PLAYER_SEEKING_INTERVAL,
-        RAINY_DAMAGE_INTERVAL
-    }
-
-    public enum DoubleSettings {
-        SUNNY_DAMAGE,
-        RAINY_DAMAGE
-    }
-
-    private void initFromConfig() {
-        boolSettings.put(BoolSettings.SUNNY_ENABLE, Config.Sunny.enable);
-        boolSettings.put(BoolSettings.THUNDER_ENABLE, Config.Thunder.enable);
-        boolSettings.put(BoolSettings.THUNDER_PLAYER_SEEKING_ENABLE, Config.Thunder.PlayerSeeking.enable);
-        boolSettings.put(BoolSettings.SNOWY_ENABLE, Config.Snowy.enable);
-        boolSettings.put(BoolSettings.RAINY_ENABLE, Config.Rainy.enable);
-
-        intSettings.put(IntSettings.SUNNY_DAMAGE_INTERVAL, Config.Sunny.damageInterval);
-        intSettings.put(IntSettings.THUNDER_CHANCE, Config.Thunder.chance);
-        intSettings.put(IntSettings.THUNDER_PLAYER_SEEKING_INTERVAL, Config.Thunder.PlayerSeeking.interval);
-        intSettings.put(IntSettings.RAINY_DAMAGE_INTERVAL, Config.Rainy.damageInterval);
-
-        doubleSettings.put(DoubleSettings.SUNNY_DAMAGE, Config.Sunny.damage);
-        doubleSettings.put(DoubleSettings.RAINY_DAMAGE, Config.Rainy.damage);
+        settings = WeatherSettings.fromConfig();
     }
 
     @Override
     public CompoundTag save(CompoundTag compoundTag, HolderLookup.Provider provider) {
 
         CompoundTag boolSettingsTag = new CompoundTag();
-        for (BoolSettings key: boolSettings.keySet()) {
-            boolSettingsTag.put(key.toString(), ByteTag.valueOf(boolSettings.get(key)));
+        for (WeatherSettings.BoolSettings key: settings.bools().keySet()) {
+            boolSettingsTag.put(key.toString(), ByteTag.valueOf(settings.bools().get(key)));
         }
 
         compoundTag.put("boolSettings", boolSettingsTag);
 
         CompoundTag intSettingsTag = new CompoundTag();
-        for (IntSettings key: intSettings.keySet()) {
-            intSettingsTag.put(key.toString(), IntTag.valueOf(intSettings.get(key)));
+        for (WeatherSettings.IntSettings key: settings.ints().keySet()) {
+            intSettingsTag.put(key.toString(), IntTag.valueOf(settings.ints().get(key)));
         }
 
         compoundTag.put("intSettings", intSettingsTag);
 
         CompoundTag doubleSettingsTag = new CompoundTag();
-        for (DoubleSettings key: doubleSettings.keySet()) {
-            doubleSettingsTag.put(key.toString(), DoubleTag.valueOf(doubleSettings.get(key)));
+        for (WeatherSettings.DoubleSettings key: settings.doubles().keySet()) {
+            doubleSettingsTag.put(key.toString(), DoubleTag.valueOf(settings.doubles().get(key)));
         }
 
         compoundTag.put("doubleSettings", doubleSettingsTag);
@@ -95,17 +52,17 @@ public class WeatherSettingsSD extends SavedData {
 
         CompoundTag boolSettingsTag = tag.getCompound("boolSettings");
         for (String key: boolSettingsTag.getAllKeys()) {
-            sd.boolSettings.put(BoolSettings.valueOf(key), boolSettingsTag.getByte(key) != 0);
+            sd.settings.bools().put(WeatherSettings.BoolSettings.valueOf(key), boolSettingsTag.getByte(key) != 0);
         }
 
         CompoundTag intSettingsTag = tag.getCompound("intSettings");
         for (String key: intSettingsTag.getAllKeys()) {
-            sd.intSettings.put(IntSettings.valueOf(key), intSettingsTag.getInt(key));
+            sd.settings.ints().put(WeatherSettings.IntSettings.valueOf(key), intSettingsTag.getInt(key));
         }
 
         CompoundTag doubleSettingsTag = tag.getCompound("doubleSettings");
         for (String key: doubleSettingsTag.getAllKeys()) {
-            sd.doubleSettings.put(DoubleSettings.valueOf(key), doubleSettingsTag.getDouble(key));
+            sd.settings.doubles().put(WeatherSettings.DoubleSettings.valueOf(key), doubleSettingsTag.getDouble(key));
         }
 
         return sd;
@@ -115,27 +72,38 @@ public class WeatherSettingsSD extends SavedData {
         return level.getDataStorage().computeIfAbsent(FACTORY, FILENAME);
     }
 
-    public boolean getBool(BoolSettings key) {
-        return boolSettings.get(key);
+    @Override
+    public void setDirty() {
+        super.setDirty();
+
+        PacketDistributor.sendToAllPlayers(settings);
     }
 
-    public int getInt(IntSettings key) {
-        return intSettings.get(key);
+    public WeatherSettings getSettings() {
+        return settings;
     }
 
-    public double getDouble(DoubleSettings key) {
-        return doubleSettings.get(key);
+    public boolean get(WeatherSettings.BoolSettings key) {
+        return settings.bools().get(key);
     }
 
-    public void setBool(BoolSettings key, boolean value) {
-        boolSettings.put(key, value);
+    public int get(WeatherSettings.IntSettings key) {
+        return settings.ints().get(key);
     }
 
-    public void setInt(IntSettings key, int value) {
-        intSettings.put(key, value);
+    public double get(WeatherSettings.DoubleSettings key) {
+        return settings.doubles().get(key);
     }
 
-    public void setDouble(DoubleSettings key, double value) {
-        doubleSettings.put(key, value);
+    public void set(WeatherSettings.BoolSettings key, boolean value) {
+        settings.bools().put(key, value);
+    }
+
+    public void set(WeatherSettings.IntSettings key, int value) {
+        settings.ints().put(key, value);
+    }
+
+    public void set(WeatherSettings.DoubleSettings key, double value) {
+        settings.doubles().put(key, value);
     }
 }
