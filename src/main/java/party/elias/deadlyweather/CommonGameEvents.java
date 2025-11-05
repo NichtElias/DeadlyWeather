@@ -13,9 +13,8 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
-@EventBusSubscriber(modid = DeadlyWeather.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = DeadlyWeather.MODID)
 public class CommonGameEvents {
 
     @SubscribeEvent
@@ -30,7 +29,7 @@ public class CommonGameEvents {
 
             if (settings.get(WeatherSettings.BoolSettings.SUNNY_ENABLE)) {
                 if (level.getGameTime() % settings.get(WeatherSettings.IntSettings.SUNNY_DAMAGE_INTERVAL) == 0
-                        && !level.isRaining() && level.isDay() && level.canSeeSky(Utils.getRelevantBlockPos(player)))
+                        && !level.isRaining() && !level.isBrightOutside() && level.canSeeSky(Utils.getRelevantBlockPos(player)))
                 {
                     player.hurtServer(level, new DamageSource(registryAccess.holderOrThrow(DamageTypes.IN_FIRE)), (float) settings.get(WeatherSettings.DoubleSettings.SUNNY_DAMAGE));
                 }

@@ -1,5 +1,7 @@
 package party.elias.deadlyweather;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -8,9 +10,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public record WeatherSettings (HashMap<BoolSettings, Boolean> bools, HashMap<IntSettings, Integer> ints,
                                HashMap<DoubleSettings, Double> doubles) implements CustomPacketPayload {
+
+    public WeatherSettings(Map<BoolSettings, Boolean> bools, Map<IntSettings, Integer> ints,
+                           Map<DoubleSettings, Double> doubles) {
+        this(new HashMap<>(bools), new HashMap<>(ints), new HashMap<>(doubles));
+    }
 
     public static final CustomPacketPayload.Type<WeatherSettings> TYPE =
             new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(DeadlyWeather.MODID, "weather_settings"));
@@ -35,6 +43,23 @@ public record WeatherSettings (HashMap<BoolSettings, Boolean> bools, HashMap<Int
             ),
             WeatherSettings::doubles,
             WeatherSettings::new
+    );
+
+    public static final Codec<WeatherSettings> CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                    Codec.unboundedMap(
+                            StringRepresentable.fromEnum(BoolSettings::values),
+                            Codec.BOOL
+                    ).fieldOf("boolSettings").forGetter(WeatherSettings::bools),
+                    Codec.unboundedMap(
+                            StringRepresentable.fromEnum(IntSettings::values),
+                            Codec.INT
+                    ).fieldOf("intSettings").forGetter(WeatherSettings::ints),
+                    Codec.unboundedMap(
+                            StringRepresentable.fromEnum(DoubleSettings::values),
+                            Codec.DOUBLE
+                    ).fieldOf("doubleSettings").forGetter(WeatherSettings::doubles)
+            ).apply(instance, WeatherSettings::new)
     );
 
     public static WeatherSettings fromConfig() {

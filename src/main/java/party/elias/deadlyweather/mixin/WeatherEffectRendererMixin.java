@@ -10,7 +10,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import party.elias.deadlyweather.ClientWeatherSettings;
-import party.elias.deadlyweather.Config;
 import party.elias.deadlyweather.DeadlyWeather;
 import party.elias.deadlyweather.WeatherSettings;
 
@@ -20,7 +19,7 @@ public class WeatherEffectRendererMixin {
     private static final ResourceLocation RAIN_LOCATION = ResourceLocation.withDefaultNamespace("textures/environment/rain.png");
     private static final ResourceLocation ACID_RAIN_LOCATION = ResourceLocation.fromNamespaceAndPath(DeadlyWeather.MODID, "textures/environment/acid_rain.png");
 
-    @ModifyArg(method = "render(Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/phys/Vec3;IFLjava/util/List;Ljava/util/List;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderType;weather(Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/renderer/RenderType;"), index = 0)
+    @ModifyArg(method = "render(Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/client/renderer/state/WeatherRenderState;Lnet/minecraft/client/renderer/state/LevelRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/RenderType;weather(Lnet/minecraft/resources/ResourceLocation;Z)Lnet/minecraft/client/renderer/RenderType;"), index = 0)
     private ResourceLocation modifyShaderTexture(ResourceLocation resourceLocation) {
         if (ClientWeatherSettings.get(WeatherSettings.BoolSettings.RAINY_ENABLE) && resourceLocation.equals(RAIN_LOCATION)) {
             return ACID_RAIN_LOCATION;

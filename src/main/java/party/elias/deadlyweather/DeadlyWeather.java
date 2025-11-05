@@ -20,7 +20,6 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handlers.ClientPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -47,12 +46,12 @@ public class DeadlyWeather {
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
-        if (FMLEnvironment.dist == Dist.CLIENT)
+        if (FMLEnvironment.getDist() == Dist.CLIENT)
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 
     }
 
-    @EventBusSubscriber(modid = DeadlyWeather.MODID, bus = EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = DeadlyWeather.MODID)
     public static class ModEvents {
         @SubscribeEvent
         public static void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {

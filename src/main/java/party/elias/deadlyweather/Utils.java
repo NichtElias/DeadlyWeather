@@ -13,7 +13,7 @@ public class Utils {
     public static LightningBolt strikeLightningAt(ServerLevel level, BlockPos blockPos) {
         LightningBolt lightningBolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.NATURAL);
         if (lightningBolt != null) {
-            lightningBolt.moveTo(Vec3.atBottomCenterOf(blockPos));
+            lightningBolt.snapTo(Vec3.atBottomCenterOf(blockPos));
             level.addFreshEntity(lightningBolt);
         }
         return lightningBolt;
